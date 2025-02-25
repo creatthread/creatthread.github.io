@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>甲骨文挑战</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #oracle-image {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            border: 2px solid #333;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background-color: #e0e0e0;
+        }
+
+        #feedback {
+            height: 30px;
+            margin: 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .wrong {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>甲骨文挑战</h1>
+    <div id="oracle-image"></div>
+    <div class="options-container" id="options"></div>
+    <div id="feedback"></div>
+
+    <script>
+        // 甲骨文题库（需要替换为实际图片路径）
+        const oracleData = [
+            { oracleChar: "images/oracle1.png", modernChar: "安" },
+            { oracleChar: "images/oracle2.png", modernChar: "鼻" },
+            { oracleChar: "images/oracle3.png", modernChar: "白" },
+            { oracleChar: "images/oracle4.png", modernChar: "百" },
+            { oracleChar: "images/oracle5.png", modernChar: "宝" },
+            { oracleChar: "images/oracle6.png", modernChar: "朝" },
+            { oracleChar: "images/oracle7.png", modernChar: "车" },
+            { oracleChar: "images/oracle8.png", modernChar: "冬" },
+            { oracleChar: "images/oracle9.png", modernChar: "骑" },
+            { oracleChar: "images/oracle10.png", modernChar: "兵" }
+        ];
+
+        let currentQuestion;
+
+        // 初始化游戏
+        function initGame() {
+            // 清空反馈信息
+            const feedback = document.getElementById("feedback");
+            feedback.textContent = "";
+            feedback.className = "";
+
+            // 随机选择一个甲骨文题目
+            currentQuestion = oracleData[Math.floor(Math.random() * oracleData.length)];
+            
+            // 显示甲骨文图片
+            const oracleImg = document.getElementById("oracle-image");
+            oracleImg.style.backgroundImage = `url(${currentQuestion.oracleChar})`;
+            oracleImg.style.backgroundSize = "contain";
+            oracleImg.style.backgroundRepeat = "no-repeat";
+
+            // 生成选项
+            generateOptions();
+        }
+        // 生成选项
+        function generateOptions() {
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            
+            // 创建包含正确答案的选项数组
+            const options = [currentQuestion.modernChar];
+            
+            // 添加三个随机错误答案
+            while (options.length < 4) {
+                const randomChar = oracleData[Math.floor(Math.random() * oracleData.length)].modernChar;
+                if (!options.includes(randomChar) && randomChar !== currentQuestion.modernChar) {
+                    options.push(randomChar);
+                }
+            }
+            
+            // 打乱选项顺序
+            options.sort(() => Math.random() - 0.5);
+            
+            // 创建选项按钮
+            options.forEach(char => {
+                const button = document.createElement("button");
+                button.textContent = char;
+                button.onclick = () => checkAnswer(char);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // 检查答案
+        function checkAnswer(selectedChar) {
+            const feedback = document.getElementById("feedback");
+            
+            if (selectedChar === currentQuestion.modernChar) {
+                feedback.textContent = "✅ 正确！";
+                feedback.className = "correct";
+            } else {
+                feedback.textContent = `❌ 错误，正确答案是：${currentQuestion.modernChar}`;
+                feedback.className = "wrong";
+            }
+            
+            // 1秒后加载新题目
+            setTimeout(initGame, 1300);
+        }
+
+        // 页面加载时开始游戏
+        window.onload = initGame;
+    </script>
+</body>
+</html>
